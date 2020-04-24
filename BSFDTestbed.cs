@@ -1,6 +1,5 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
-using System.Net.NetworkInformation;
 using UnityEngine;
 
 namespace BSFDTestbed
@@ -15,9 +14,12 @@ namespace BSFDTestbed
         // Set this to true if you will be load custom assets from Assets folder.
         // This will create subfolder in Assets folder for your mod.
         public override bool UseAssetsFolder => true;
+        public GameObject PLAYER;
         public static Interaction boltInteraction;
         public static bool GUIuse;
         public static FsmFloat gameToolID;
+        public static AudioClip assembleSound;
+        public static AudioClip disassembleSound;
         public override void OnNewGame()
         {
             // Called once, when starting a New Game, you can reset your saves here
@@ -25,8 +27,21 @@ namespace BSFDTestbed
 
         public override void OnLoad()
         {
+            PLAYER = GameObject.Find("PLAYER");
+            boltInteraction = PLAYER.AddComponent<Interaction>();
             GUIuse = PlayMakerGlobals.Instance.Variables.GetFsmBool("GUIuse").Value;
             gameToolID = PlayMakerGlobals.Instance.Variables.GetFsmFloat("ToolWrenchSize");
+
+            AssetBundle ab = LoadAssets.LoadBundle(this, "bsfd.unity3d");
+            GameObject bolttest = ab.LoadAsset("bolt.prefab") as GameObject;
+            GameObject boltboxtest = ab.LoadAsset("boltbox.prefab") as GameObject;
+            GameObject wank = ab.LoadAsset("wanker_engine.prefab") as GameObject;
+            ab.Unload(false);
+
+
+            GameObject megabolt = GameObject.Instantiate(bolttest);
+            GameObject box = GameObject.Instantiate(boltboxtest);
+            GameObject wanker = GameObject.Instantiate(wank);
         }
 
         public override void ModSettings()

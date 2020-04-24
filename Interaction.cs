@@ -12,11 +12,12 @@ namespace BSFDTestbed
         public bool hasHit = false;
         public float rayDistance = 1.35f;
         public int layerMask;
+        public static float boltTimeDelay;
 
         // Use this for initialization
         void Start()
         {
-            layerMask = LayerMask.GetMask("Parts", "Wheel");
+            layerMask = LayerMask.GetMask("Bolts");
             hitInfo = new RaycastHit();
         }
 
