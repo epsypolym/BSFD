@@ -1,4 +1,6 @@
-﻿using MSCLoader;
+﻿using HutongGames.PlayMaker;
+using MSCLoader;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 namespace BSFDTestbed
@@ -12,8 +14,10 @@ namespace BSFDTestbed
 
         // Set this to true if you will be load custom assets from Assets folder.
         // This will create subfolder in Assets folder for your mod.
-        public override bool UseAssetsFolder => false;
-
+        public override bool UseAssetsFolder => true;
+        public static Interaction boltInteraction;
+        public static bool GUIuse;
+        public static FsmFloat gameToolID;
         public override void OnNewGame()
         {
             // Called once, when starting a New Game, you can reset your saves here
@@ -21,7 +25,8 @@ namespace BSFDTestbed
 
         public override void OnLoad()
         {
-            // Called once, when mod is loading after game is fully loaded
+            GUIuse = PlayMakerGlobals.Instance.Variables.GetFsmBool("GUIuse").Value;
+            gameToolID = PlayMakerGlobals.Instance.Variables.GetFsmFloat("ToolWrenchSize");
         }
 
         public override void ModSettings()

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BSFDTestbed
 {
-    public class InteractionRaycast : MonoBehaviour
+    public class Interaction : MonoBehaviour
     {
         public RaycastHit hitInfo;
 
