@@ -44,7 +44,7 @@ namespace BSFDTestbed
             Interaction.audioBoltScrew.Play();
             currentBoltStep -= 1;
             transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles - new Vector3(0, 0, 45));
-            transform.position += new Vector3(0, boltMoveAmount, 0);
+            transform.localPosition += new Vector3(0, boltMoveAmount, 0);
         }
 
         void BoltEventUp()
@@ -53,7 +53,7 @@ namespace BSFDTestbed
             Interaction.audioBoltScrew.Play();
             currentBoltStep += 1;
             transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, 45));
-            transform.position += new Vector3(0, -boltMoveAmount, 0);
+            transform.localPosition += new Vector3(0, -boltMoveAmount, 0);
         }
 
         // Update is called once per frame
