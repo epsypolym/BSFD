@@ -14,11 +14,14 @@ namespace BSFDTestbed
         public int layerMask;
         public static float boltTimeDelay;
 
+        public static AudioSource audioBoltScrew;
+
         // Use this for initialization
         void Start()
         {
             layerMask = LayerMask.GetMask("Bolts");
             hitInfo = new RaycastHit();
+            audioBoltScrew = GameObject.Find("MasterAudio/CarBuilding/bolt_screw").GetComponent<AudioSource>();
         }
 
         void FixedUpdate()

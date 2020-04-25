@@ -1,6 +1,7 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
 using UnityEngine;
+using System.Linq;
 
 namespace BSFDTestbed
 {
@@ -33,15 +34,18 @@ namespace BSFDTestbed
             gameToolID = PlayMakerGlobals.Instance.Variables.GetFsmFloat("ToolWrenchSize");
 
             AssetBundle ab = LoadAssets.LoadBundle(this, "bsfd.unity3d");
-            GameObject bolttest = ab.LoadAsset("bolt.prefab") as GameObject;
             GameObject boltboxtest = ab.LoadAsset("boltbox.prefab") as GameObject;
-            GameObject wank = ab.LoadAsset("wanker_engine.prefab") as GameObject;
+
+            GameObject box = GameObject.Instantiate(boltboxtest);
+
+            box.transform.position = new Vector3(2.98f, 0.6999f, 0.96f);
+
             ab.Unload(false);
 
+            Material boltActiveMaterial = new Material(Shader.Find("GUI/Text Shader"));
+            boltActiveMaterial.color = new Color(0, 1, 0);
 
-            GameObject megabolt = GameObject.Instantiate(bolttest);
-            GameObject box = GameObject.Instantiate(boltboxtest);
-            GameObject wanker = GameObject.Instantiate(wank);
+            if (boltActiveMaterial) Bolt.activeMaterial = boltActiveMaterial; else ModConsole.Print("No active bolt material found!");
         }
 
         public override void ModSettings()
