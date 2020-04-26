@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using HutongGames.PlayMaker.Actions;
 using HutongGames.PlayMaker;
+using System.Net.Mail;
 
 namespace BSFDTestbed
 {
@@ -29,6 +30,7 @@ namespace BSFDTestbed
         //References
         FsmBool GUIAssemble;
         FsmBool GUIDisassemble;
+        Rigidbody rb;
 
         // Use this for initialization
         void Start()
@@ -36,6 +38,7 @@ namespace BSFDTestbed
             //TODO: add sound init
             GUIAssemble = Interaction.GUIAssemble;
             GUIDisassemble = Interaction.GUIDisassemble;
+            rb = gameObject.GetComponent<Rigidbody>();
             StartCoroutine(UpdatePartTightness());
         }
 
@@ -49,7 +52,18 @@ namespace BSFDTestbed
                 yield return new WaitForSeconds(3f);
             }
         }
-        
+
+        IEnumerator FixParent(Transform parent)
+        {
+            yield return new WaitForEndOfFrame();
+            while (transform.parent != parent)
+            {
+                transform.parent = parent;
+                transform.localPosition = Vector3.zero;
+                transform.localEulerAngles = Vector3.zero;
+                yield return new WaitForEndOfFrame();
+            }
+        }
 
         void OnTriggerStay(Collider other)
         {
@@ -70,13 +84,13 @@ namespace BSFDTestbed
             //TODO: play attachment sound code
             partTrigger.enabled = false;
             attachmentTrigger.enabled = false;
-            gameObject.GetComponent<Rigidbody>().isKinematic = true;
+            rb.isKinematic = true;
             gameObject.tag = "Untagged";
-            gameObject.transform.parent = attachmentPoint.transform;
+            gameObject.transform.SetParent(attachmentPoint.transform);
             gameObject.transform.localPosition = Vector3.zero;
             gameObject.transform.localEulerAngles = Vector3.zero;
+            StartCoroutine(FixParent(attachmentPoint.transform));
             boltParent.SetActive(true);
-
         }
 
         void Detach()
@@ -86,7 +100,7 @@ namespace BSFDTestbed
             gameObject.tag = "PART";
             gameObject.transform.SetParent(transform.root);
             attachmentTrigger.enabled = true;
-            gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            rb.isKinematic = false;
             boltParent.SetActive(false);
             //TODO: ResetBoltStatus();
         }
