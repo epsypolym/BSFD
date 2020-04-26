@@ -41,23 +41,23 @@ namespace BSFDTestbed
         // Update is called from Interaction.cs
         public void UpdateBolt()
         {
-            if (BSFDTestbed.gameToolID.Value > 0f & boltSize == BSFDTestbed.gameToolID.Value)
+            if (boltSize == BSFDTestbed.gameToolID.Value)
             {
+                // Set active material
                 if (renderer.material != activeMaterial) SetActiveMaterial(true);
 
                 if (Input.GetAxis("Mouse ScrollWheel") != 0 && !isDelay)
                 {
                     // Rachet Logic
-                    if (Interaction.ratchetFsm.Active)
-                        BoltTightenEvent(!Interaction.ratchetSwitch.Value, 0.1f);
-                    // Spanner Logic
-                    else
-                        BoltTightenEvent(Input.GetAxis("Mouse ScrollWheel") > 0 ? false : true, 0.28f);
+                    if (Interaction.ratchetFsm.Active) BoltTightenEvent(!Interaction.ratchetSwitch.Value, 0.1f);
+
+                    // Spanner Logic                      
+                    else BoltTightenEvent(Input.GetAxis("Mouse ScrollWheel") > 0 ? false : true, 0.28f);
                 }
             }
             else
             {
-                if (renderer.material != defaultMaterial) SetActiveMaterial(false);
+                Exit();
             }
         }
 

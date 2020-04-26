@@ -15,10 +15,6 @@ namespace BSFDTestbed
         public int tightness = 0;    // Current part tightness, calculated by UpdatePartTightness()
         public int MaxTightness;    // Part will not fall off if tightness = MaxTightness
 
-        //Sound related variables
-        AudioClip assembleSound; // Sound to be played on item attachment.
-        AudioClip disassembleSound; // Sound to be played on item detachment.
-
         //part(self) related variables
         public bool isFitted; // Self explanatory
         public AudioSource soundSource; // Source of assembleSound and disassembleSound.
@@ -27,6 +23,7 @@ namespace BSFDTestbed
         //part(thing you are attaching to) related variables
         public GameObject attachmentPoint; // GameObject, parent of Part upon attachment.
         public Collider attachmentTrigger; // Collider, Trigger, used for collision test between partTrigger.
+
         //References
         FsmBool GUIAssemble;
         FsmBool GUIDisassemble;
@@ -35,7 +32,6 @@ namespace BSFDTestbed
         // Use this for initialization
         void Start()
         {
-            //TODO: add sound init
             GUIAssemble = Interaction.GUIAssemble;
             GUIDisassemble = Interaction.GUIDisassemble;
             rb = gameObject.GetComponent<Rigidbody>();
@@ -81,22 +77,32 @@ namespace BSFDTestbed
         void Attach()
         {
             isFitted = true;
-            //TODO: play attachment sound code
-            partTrigger.enabled = false;
-            attachmentTrigger.enabled = false;
-            rb.isKinematic = true;
-            gameObject.tag = "Untagged";
-            gameObject.transform.SetParent(attachmentPoint.transform);
-            gameObject.transform.localPosition = Vector3.zero;
-            gameObject.transform.localEulerAngles = Vector3.zero;
+            transform.parent = attachmentPoint.transform;
+            transform.localPosition = Vector3.zero;
+            transform.localEulerAngles = Vector3.zero;
+            StartCoroutine(LateAttach());
             StartCoroutine(FixParent(attachmentPoint.transform));
             boltParent.SetActive(true);
+        }
+
+        IEnumerator LateAttach()
+        {
+            while(!rb.isKinematic || rb.useGravity)
+            {
+                rb.isKinematic = true;
+                rb.useGravity = false;
+                yield return new WaitForEndOfFrame();
+            }
+            BSFDTestbed.assembleAudio.Play();
+            partTrigger.enabled = false;
+            attachmentTrigger.enabled = false;
+            gameObject.tag = "Untagged";
         }
 
         void Detach()
         {
             isFitted = false;
-            //TODO: play detachment sound code
+            BSFDTestbed.disassembleAudio.Play();
             gameObject.tag = "PART";
             gameObject.transform.SetParent(transform.root);
             attachmentTrigger.enabled = true;

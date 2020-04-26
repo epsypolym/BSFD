@@ -19,8 +19,9 @@ namespace BSFDTestbed
         public static Interaction boltInteraction;
         public static bool GUIuse;
         public static FsmFloat gameToolID;
-        public static AudioClip assembleSound;
-        public static AudioClip disassembleSound;
+
+        public static AudioSource assembleAudio;
+        public static AudioSource disassembleAudio;
         public override void OnNewGame()
         {
             // Called once, when starting a New Game, you can reset your saves here
@@ -33,17 +34,17 @@ namespace BSFDTestbed
             GUIuse = PlayMakerGlobals.Instance.Variables.GetFsmBool("GUIuse").Value;
             gameToolID = PlayMakerGlobals.Instance.Variables.GetFsmFloat("ToolWrenchSize");
 
+            assembleAudio = GameObject.Find("MasterAudio/CarBuilding/assemble").GetComponent<AudioSource>();
+            disassembleAudio = GameObject.Find("MasterAudio/CarBuilding/disassemble").GetComponent<AudioSource>();
+
             AssetBundle ab = LoadAssets.LoadBundle(this, "bsfd.unity3d");
             GameObject boltboxtest = ab.LoadAsset("boltbox.prefab") as GameObject;
             GameObject parts = ab.LoadAsset("PARTS.prefab") as GameObject;
             GameObject st = ab.LoadAsset("StressTest.prefab") as GameObject;
             
-
             GameObject box = GameObject.Instantiate(boltboxtest);
             GameObject paarts = GameObject.Instantiate(parts);
             
-
-
             box.transform.position = new Vector3(2.98f, 0.6999f, 0.96f);
 
             ab.Unload(false);

@@ -33,8 +33,7 @@ namespace BSFDTestbed
             ratchetFsm = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/2Spanner/Pivot/Ratchet").GetComponent<PlayMakerFSM>();
             ratchetSwitch = ratchetFsm.FsmVariables.FindFsmBool("Switch");
             GUIAssemble = PlayMakerGlobals.Instance.Variables.FindFsmBool("GUIassemble");
-            GUIDisassemble = PlayMakerGlobals.Instance.Variables.FindFsmBool("GUIdisassemble");
-            
+            GUIDisassemble = PlayMakerGlobals.Instance.Variables.FindFsmBool("GUIdisassemble");          
         }
 
         void FixedUpdate()
