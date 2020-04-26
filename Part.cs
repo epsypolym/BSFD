@@ -80,8 +80,8 @@ namespace BSFDTestbed
             transform.parent = attachmentPoint.transform;
             transform.localPosition = Vector3.zero;
             transform.localEulerAngles = Vector3.zero;
-            StartCoroutine(LateAttach());
             StartCoroutine(FixParent(attachmentPoint.transform));
+            StartCoroutine(LateAttach());
             boltParent.SetActive(true);
         }
 
