@@ -24,16 +24,11 @@ namespace BSFDTestbed
         public GameObject attachmentPoint; // GameObject, parent of Part upon attachment.
         public Collider attachmentTrigger; // Collider, Trigger, used for collision test between partTrigger.
 
-        //References
-        FsmBool GUIAssemble;
-        FsmBool GUIDisassemble;
         Rigidbody rb;
 
         // Use this for initialization
         void Start()
         {
-            GUIAssemble = Interaction.GUIAssemble;
-            GUIDisassemble = Interaction.GUIDisassemble;
             rb = gameObject.GetComponent<Rigidbody>();
             StartCoroutine(UpdatePartTightness());
         }
@@ -65,18 +60,18 @@ namespace BSFDTestbed
         {
             if (!isFitted && other == attachmentTrigger)
             {
-                GUIAssemble.Value = true;
+                Interaction.GUIAssemble.Value = true;
                 if (Input.GetMouseButtonDown(0))
                 {
                     Attach();
-                    GUIAssemble.Value = false;
+                    Interaction.GUIAssemble.Value = false;
                 }
             }
         }
 
         void Attach()
         {
-            isFitted = true;
+            if (isFitted) return;
             transform.parent = attachmentPoint.transform;
             transform.localPosition = Vector3.zero;
             transform.localEulerAngles = Vector3.zero;
@@ -97,18 +92,32 @@ namespace BSFDTestbed
             partTrigger.enabled = false;
             attachmentTrigger.enabled = false;
             gameObject.tag = "Untagged";
+            isFitted = true;
         }
 
-        void Detach()
+        public void Detach()
         {
-            isFitted = false;
+            if (!isFitted) return;
+
             BSFDTestbed.disassembleAudio.Play();
             gameObject.tag = "PART";
-            gameObject.transform.SetParent(transform.root);
-            attachmentTrigger.enabled = true;
-            rb.isKinematic = false;
+            transform.parent = null;
+            StartCoroutine(FixParent(null));
+            StartCoroutine(LateDetach());
             boltParent.SetActive(false);
             //TODO: ResetBoltStatus();
+        }
+
+        IEnumerator LateDetach()
+        {
+            while (rb.isKinematic || !rb.useGravity)
+            {
+                rb.isKinematic = false;
+                rb.useGravity = true;
+                yield return new WaitForEndOfFrame();
+            }
+            attachmentTrigger.enabled = true;
+            isFitted = false;
         }
 
         void UntightenAllBolts()

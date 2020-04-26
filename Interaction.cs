@@ -10,10 +10,12 @@ namespace BSFDTestbed
     public class Interaction : MonoBehaviour
     {
         public RaycastHit hitInfo;
+        private Part raycastedPart;
 
         public bool hasHit = false;
         public float rayDistance = 1.35f;
-        public int layerMask;
+        public int layerMaskBolts;
+        public int layerMaskParts;
 
         public static AudioSource audioBoltScrew;
 
@@ -27,7 +29,9 @@ namespace BSFDTestbed
         // Use this for initialization
         void Start()
         {
-            layerMask = LayerMask.GetMask("Bolts");
+            layerMaskBolts = LayerMask.GetMask("Bolts");
+            layerMaskParts = LayerMask.GetMask("Parts");
+
             hitInfo = new RaycastHit();
             audioBoltScrew = GameObject.Find("MasterAudio/CarBuilding/bolt_screw").GetComponent<AudioSource>();
             ratchetFsm = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/2Spanner/Pivot/Ratchet").GetComponent<PlayMakerFSM>();
@@ -38,11 +42,26 @@ namespace BSFDTestbed
 
         void FixedUpdate()
         {
+            // Detach Parts
+            RaycastHit hit;          
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, rayDistance, layerMaskParts))
+            {
+                raycastedPart = hit.collider.GetComponent<Part>();
+                if(raycastedPart)
+                {
+                    if(raycastedPart.isFitted && raycastedPart.tightness == 0)
+                    {
+                        GUIDisassemble.Value = true;
+                        if (Input.GetMouseButtonDown(1)) raycastedPart.Detach();
+                    }
+                }
+            }
+
             // don't update raycast, if not in tool mode
-            if(BSFDTestbed.gameToolID.Value == 0)
+            if (BSFDTestbed.gameToolID.Value == 0)
             {
                 // deactivate bolt.
-                if(activeBolt)
+                if (activeBolt)
                 {
                     activeBolt.Exit();
                     activeBolt = null;
@@ -52,7 +71,7 @@ namespace BSFDTestbed
             }
 
             // do raycast
-            if (Camera.main != null) hasHit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, rayDistance, layerMask);
+            if (Camera.main != null) hasHit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, rayDistance, layerMaskBolts);
 
             // set active bolt
             if (hasHit && !activeBolt)
