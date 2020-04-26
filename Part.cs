@@ -1,27 +1,41 @@
 ﻿using MSCLoader;
 using UnityEngine;
 using System.Collections;
+using HutongGames.PlayMaker.Actions;
+using HutongGames.PlayMaker;
 
 namespace BSFDTestbed
 {
     public class Part : MonoBehaviour
     {
-        public Bolt[] bolts; // Array of bolts, define in Unity inspector
-        public int tightness = 0;  // Current part tightness, calculated by UpdatePartTightness().
-        public int MinTightness;  // If Tightness < MinTightness, part can be taken off by hand, recommended value for MinTightnes is ~60% of MaxTightness.
-        public int MaxTightness; // Part will not fall off if tightness = MaxTightness
-        public bool isFitted; // Self explanatory.
-        public GameObject pivotPoint;
-        AudioClip assembleSound;
-        AudioClip disassembleSound;
-        public Collider pivotCollider;
-        ConfigurableJoint configJoint;
-        public GameObject boltsParent;
-        public AudioSource soundSource;
+        //Bolt related variables
+        public GameObject boltParent; // GameObject, Child of Part, Parent of ALL BOLTS.
+        public Bolt[] bolts;          // Array of bolts, define in Unity inspector
+        public int tightness = 0;    // Current part tightness, calculated by UpdatePartTightness()
+        public int MaxTightness;    // Part will not fall off if tightness = MaxTightness
+
+        //Sound related variables
+        AudioClip assembleSound; // Sound to be played on item attachment.
+        AudioClip disassembleSound; // Sound to be played on item detachment.
+
+        //part(self) related variables
+        public bool isFitted; // Self explanatory
+        public AudioSource soundSource; // Source of assembleSound and disassembleSound.
+        public Collider partTrigger; // Trigger of part, used for collision test between attachmentTrigger.
+
+        //part(thing you are attaching to) related variables
+        public GameObject attachmentPoint; // GameObject, parent of Part upon attachment.
+        public Collider attachmentTrigger; // Collider, Trigger, used for collision test between partTrigger.
+        //References
+        FsmBool GUIAssemble;
+        FsmBool GUIDisassemble;
 
         // Use this for initialization
         void Start()
         {
+            //TODO: add sound init
+            GUIAssemble = Interaction.GUIAssemble;
+            GUIDisassemble = Interaction.GUIDisassemble;
             StartCoroutine(UpdatePartTightness());
         }
 
@@ -35,72 +49,52 @@ namespace BSFDTestbed
                 yield return new WaitForSeconds(3f);
             }
         }
+        
 
-        public void Attach(bool playSound = true)
+        void OnTriggerStay(Collider other)
+        {
+            if (!isFitted && other == attachmentTrigger)
+            {
+                GUIAssemble.Value = true;
+                if (Input.GetMouseButtonDown(0))
+                {
+                    Attach();
+                    GUIAssemble.Value = false;
+                }
+            }
+        }
+
+        void Attach()
         {
             isFitted = true;
-            if (playSound) PlaySound(assembleSound);
-
-            pivotCollider.enabled = false;
-            gameObject.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Discrete;
-
+            //TODO: play attachment sound code
+            partTrigger.enabled = false;
+            attachmentTrigger.enabled = false;
+            gameObject.GetComponent<Rigidbody>().isKinematic = true;
             gameObject.tag = "Untagged";
-            gameObject.transform.parent = pivotPoint.transform;
+            gameObject.transform.parent = attachmentPoint.transform;
             gameObject.transform.localPosition = Vector3.zero;
             gameObject.transform.localEulerAngles = Vector3.zero;
-            StartCoroutine(FixParent(pivotPoint.transform));
+            boltParent.SetActive(true);
 
-            configJoint = gameObject.AddComponent<ConfigurableJoint>();
-            configJoint.xMotion = ConfigurableJointMotion.Limited;
-            configJoint.yMotion = ConfigurableJointMotion.Limited;
-            configJoint.zMotion = ConfigurableJointMotion.Limited;
-            configJoint.angularXMotion = ConfigurableJointMotion.Limited;
-            configJoint.angularYMotion = ConfigurableJointMotion.Limited;
-            configJoint.angularZMotion = ConfigurableJointMotion.Limited;
-            configJoint.connectedBody = pivotPoint.transform.parent.gameObject.GetComponent<Rigidbody>();
-            configJoint.breakForce = 100;
-            configJoint.breakTorque = 50;
-
-            boltsParent.SetActive(true);
-            
         }
 
-        IEnumerator FixParent(Transform parent)
-        {
-            yield return new WaitForEndOfFrame();
-            while (transform.parent != parent)
-            {
-                transform.parent = parent;
-                transform.localPosition = Vector3.zero;
-                transform.localEulerAngles = Vector3.zero;
-                yield return new WaitForEndOfFrame();
-            }
-        }
-
-        public void Detach()
+        void Detach()
         {
             isFitted = false;
-            PlaySound(disassembleSound);
-
+            //TODO: play detachment sound code
             gameObject.tag = "PART";
             gameObject.transform.SetParent(transform.root);
-            pivotPoint.GetComponent<Collider>().enabled = true;
-            gameObject.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Continuous;
-
-            foreach (var b in bolts) b.currentBoltStep = 0;
-
-            boltsParent.SetActive(false);
-            
+            attachmentTrigger.enabled = true;
+            gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            boltParent.SetActive(false);
+            //TODO: ResetBoltStatus();
         }
 
-        void PlaySound(AudioClip clip, float pitch = 1f)
+        void UntightenAllBolts()
         {
-            if (!soundSource.isPlaying)
-            {
-                soundSource.pitch = pitch;
-                soundSource.PlayOneShot(clip);
-            }
-        }
+            //TODO: untightening event 
 
+        }
     }
 }

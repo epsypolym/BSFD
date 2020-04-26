@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using HutongGames.PlayMaker;
+using System.Net.NetworkInformation;
 
 namespace BSFDTestbed
 {
@@ -18,6 +19,8 @@ namespace BSFDTestbed
 
         public static PlayMakerFSM ratchetFsm;
         public static FsmBool ratchetSwitch;
+        public static FsmBool GUIAssemble;
+        public static FsmBool GUIDisassemble;
 
         private Bolt activeBolt;
 
@@ -29,6 +32,9 @@ namespace BSFDTestbed
             audioBoltScrew = GameObject.Find("MasterAudio/CarBuilding/bolt_screw").GetComponent<AudioSource>();
             ratchetFsm = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/2Spanner/Pivot/Ratchet").GetComponent<PlayMakerFSM>();
             ratchetSwitch = ratchetFsm.FsmVariables.FindFsmBool("Switch");
+            GUIAssemble = PlayMakerGlobals.Instance.Variables.FindFsmBool("GUIassemble");
+            GUIDisassemble = PlayMakerGlobals.Instance.Variables.FindFsmBool("GUIdisassemble");
+            
         }
 
         void FixedUpdate()

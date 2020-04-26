@@ -35,8 +35,15 @@ namespace BSFDTestbed
 
             AssetBundle ab = LoadAssets.LoadBundle(this, "bsfd.unity3d");
             GameObject boltboxtest = ab.LoadAsset("boltbox.prefab") as GameObject;
+            GameObject h = ab.LoadAsset("head.prefab") as GameObject;
+            GameObject b = ab.LoadAsset("block.prefab") as GameObject;
 
             GameObject box = GameObject.Instantiate(boltboxtest);
+            GameObject head = GameObject.Instantiate(h);
+            GameObject block = GameObject.Instantiate(b);
+
+            LoadAssets.MakeGameObjectPickable(head);
+            LoadAssets.MakeGameObjectPickable(block);
 
             box.transform.position = new Vector3(2.98f, 0.6999f, 0.96f);
 
