@@ -25,12 +25,15 @@ namespace BSFDTestbed
         public Collider attachmentTrigger; // Collider, Trigger, used for collision test between partTrigger.
 
         Rigidbody rb;
+        Transform ItemPivot;
 
         // Use this for initialization
         void Start()
         {
             rb = gameObject.GetComponent<Rigidbody>();
             StartCoroutine(UpdatePartTightness());
+            ItemPivot = Interaction.ItemPivot;
+            
         }
 
         IEnumerator UpdatePartTightness()
@@ -58,7 +61,7 @@ namespace BSFDTestbed
 
         void OnTriggerStay(Collider other)
         {
-            if (!isFitted && other == attachmentTrigger)
+            if (!isFitted && other == attachmentTrigger && gameObject.transform.IsChildOf(ItemPivot))
             {
                 Interaction.GUIAssemble.Value = true;
                 if (Input.GetMouseButtonDown(0))
@@ -101,8 +104,11 @@ namespace BSFDTestbed
 
             BSFDTestbed.disassembleAudio.Play();
             gameObject.tag = "PART";
-            transform.parent = null;
-            StartCoroutine(FixParent(null));
+            transform.parent = transform.root;
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            attachmentTrigger.enabled = true;
+            isFitted = false;
             StartCoroutine(LateDetach());
             boltParent.SetActive(false);
             //TODO: ResetBoltStatus();

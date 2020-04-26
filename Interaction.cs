@@ -23,6 +23,7 @@ namespace BSFDTestbed
         public static FsmBool ratchetSwitch;
         public static FsmBool GUIAssemble;
         public static FsmBool GUIDisassemble;
+        public static Transform ItemPivot;
 
         private Bolt activeBolt;
 
@@ -37,7 +38,8 @@ namespace BSFDTestbed
             ratchetFsm = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/2Spanner/Pivot/Ratchet").GetComponent<PlayMakerFSM>();
             ratchetSwitch = ratchetFsm.FsmVariables.FindFsmBool("Switch");
             GUIAssemble = PlayMakerGlobals.Instance.Variables.FindFsmBool("GUIassemble");
-            GUIDisassemble = PlayMakerGlobals.Instance.Variables.FindFsmBool("GUIdisassemble");          
+            GUIDisassemble = PlayMakerGlobals.Instance.Variables.FindFsmBool("GUIdisassemble");
+            ItemPivot = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/ItemPivot").transform;
         }
 
         void FixedUpdate()
