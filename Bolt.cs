@@ -12,26 +12,16 @@ namespace BSFDTestbed
         public int maxBoltSteps = 8;
         public float boltSize;
         public float boltMoveAmount;
-        bool mouseOver = false;
-
-        Interaction boltInteraction;
-        bool GUIuse;
-        Collider selfCollider;
-        FsmFloat gameToolID;
 
         public static Material defaultMaterial;
         public static Material activeMaterial;
-        Renderer renderer;
 
+        Renderer renderer;
         bool isDelay = false;
 
         // Use this for initialization
         void Start()
         {
-            boltInteraction = BSFDTestbed.boltInteraction;
-            GUIuse = BSFDTestbed.GUIuse;
-            selfCollider = GetComponent<Collider>();
-            gameToolID = BSFDTestbed.gameToolID;
             renderer = GetComponent<Renderer>();
             if(defaultMaterial == null) defaultMaterial = Instantiate(renderer.material) as Material;
         }
@@ -48,10 +38,10 @@ namespace BSFDTestbed
             }
         }
 
-        // Update is called once per frame
-        void Update()
+        // Update is called from Interaction.cs
+        public void UpdateBolt()
         {
-            if (boltInteraction.GetHit(selfCollider) & gameToolID.Value > 0f & boltSize == gameToolID.Value)
+            if (BSFDTestbed.gameToolID.Value > 0f & boltSize == BSFDTestbed.gameToolID.Value)
             {
                 if (renderer.material != activeMaterial) SetActiveMaterial(true);
 
@@ -69,6 +59,11 @@ namespace BSFDTestbed
             {
                 if (renderer.material != defaultMaterial) SetActiveMaterial(false);
             }
+        }
+
+        public void Exit()
+        {
+            if (renderer.material != defaultMaterial) SetActiveMaterial(false);
         }
 
         void SetActiveMaterial(bool active)

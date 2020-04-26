@@ -19,6 +19,8 @@ namespace BSFDTestbed
         public static PlayMakerFSM ratchetFsm;
         public static FsmBool ratchetSwitch;
 
+        private Bolt activeBolt;
+
         // Use this for initialization
         void Start()
         {
@@ -31,7 +33,38 @@ namespace BSFDTestbed
 
         void FixedUpdate()
         {
+            // don't update raycast, if not in tool mode
+            if(BSFDTestbed.gameToolID.Value == 0)
+            {
+                // deactivate bolt.
+                if(activeBolt)
+                {
+                    activeBolt.Exit();
+                    activeBolt = null;
+                }
+                // exit from the loop.
+                return;
+            }
+
+            // do raycast
             if (Camera.main != null) hasHit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, rayDistance, layerMask);
+
+            // set active bolt
+            if (hasHit && !activeBolt)
+            {
+                activeBolt = hitInfo.collider.GetComponent<Bolt>();
+            }
+            // deactivate bolt
+            else if (!hasHit && activeBolt)
+            {
+                activeBolt.Exit();
+                activeBolt = null;
+            }
+        }
+
+        void Update()
+        {
+            if (activeBolt) activeBolt.UpdateBolt();
         }
 
         public bool GetHit(Collider collider) => hasHit && hitInfo.collider == collider;
