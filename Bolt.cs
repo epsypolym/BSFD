@@ -14,7 +14,6 @@ namespace BSFDTestbed
         public float boltMoveAmount;
         bool mouseOver = false;
 
-        float boltTimeDelay;
         Interaction boltInteraction;
         bool GUIuse;
         Collider selfCollider;
@@ -32,28 +31,21 @@ namespace BSFDTestbed
             boltInteraction = BSFDTestbed.boltInteraction;
             GUIuse = BSFDTestbed.GUIuse;
             selfCollider = GetComponent<Collider>();
-            boltTimeDelay = Interaction.boltTimeDelay;
             gameToolID = BSFDTestbed.gameToolID;
             renderer = GetComponent<Renderer>();
             if(defaultMaterial == null) defaultMaterial = Instantiate(renderer.material) as Material;
         }
 
-        void BoltEventDown()
+        void BoltTightenEvent(bool down, float delayTime)
         {
-            StartCoroutine(Delay(0.28f));
-            Interaction.audioBoltScrew.Play();
-            currentBoltStep -= 1;
-            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles - new Vector3(0, 0, 45));
-            transform.localPosition += new Vector3(0, boltMoveAmount, 0);
-        }
-
-        void BoltEventUp()
-        {
-            StartCoroutine(Delay(0.28f));
-            Interaction.audioBoltScrew.Play();
-            currentBoltStep += 1;
-            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, 45));
-            transform.localPosition += new Vector3(0, -boltMoveAmount, 0);
+            if( (down && currentBoltStep > 0) || (!down && currentBoltStep < maxBoltSteps))
+            {
+                StartCoroutine(Delay(delayTime));
+                Interaction.audioBoltScrew.Play();
+                currentBoltStep += down ? -1 : 1;
+                transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, down ? -45 : 45));
+                transform.localPosition += new Vector3(0, down ? boltMoveAmount : -boltMoveAmount, 0);
+            }
         }
 
         // Update is called once per frame
@@ -63,15 +55,17 @@ namespace BSFDTestbed
             {
                 if (renderer.material != activeMaterial) SetActiveMaterial(true);
 
-                if (Input.GetAxis("Mouse ScrollWheel") > 0f && Time.time >= boltTimeDelay && currentBoltStep < maxBoltSteps && !isDelay) // Scroll Up
+                if (Input.GetAxis("Mouse ScrollWheel") != 0 && !isDelay)
                 {
-                    BoltEventUp();
+                    // Rachet Logic
+                    if (Interaction.ratchetFsm.Active)
+                        BoltTightenEvent(!Interaction.ratchetSwitch.Value, 0.1f);
+                    // Spanner Logic
+                    else
+                        BoltTightenEvent(Input.GetAxis("Mouse ScrollWheel") > 0 ? false : true, 0.28f);
                 }
-                else if (Input.GetAxis("Mouse ScrollWheel") < 0f && Time.time >= boltTimeDelay && currentBoltStep > 0 && !isDelay) // Scroll Down
-                {
-                    BoltEventDown();
-                }
-            } else
+            }
+            else
             {
                 if (renderer.material != defaultMaterial) SetActiveMaterial(false);
             }

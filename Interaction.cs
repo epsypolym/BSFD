@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using HutongGames.PlayMaker;
 
 namespace BSFDTestbed
 {
@@ -12,9 +13,11 @@ namespace BSFDTestbed
         public bool hasHit = false;
         public float rayDistance = 1.35f;
         public int layerMask;
-        public static float boltTimeDelay;
 
         public static AudioSource audioBoltScrew;
+
+        public static PlayMakerFSM ratchetFsm;
+        public static FsmBool ratchetSwitch;
 
         // Use this for initialization
         void Start()
@@ -22,6 +25,8 @@ namespace BSFDTestbed
             layerMask = LayerMask.GetMask("Bolts");
             hitInfo = new RaycastHit();
             audioBoltScrew = GameObject.Find("MasterAudio/CarBuilding/bolt_screw").GetComponent<AudioSource>();
+            ratchetFsm = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/2Spanner/Pivot/Ratchet").GetComponent<PlayMakerFSM>();
+            ratchetSwitch = ratchetFsm.FsmVariables.FindFsmBool("Switch");
         }
 
         void FixedUpdate()
