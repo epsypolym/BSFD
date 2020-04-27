@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using HutongGames.PlayMaker;
 
 namespace BSFDTestbed
@@ -89,7 +87,7 @@ namespace BSFDTestbed
                 return;
             }
 
-            // do raycast
+            // do bolt raycast
             if (Camera.main != null) hasHit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, rayDistance, layerMaskBolts);
 
             // set active bolt
@@ -111,8 +109,8 @@ namespace BSFDTestbed
             if (activeBolt) activeBolt.UpdateBolt();
         }
 
-        public bool GetHit(Collider collider) => hasHit && hitInfo.collider == collider;
-        public bool GetHitAny(Collider[] colliders) => hasHit && colliders.Any(collider => collider == hitInfo.collider);
-        public bool GetHitAny(List<Collider> colliders) => hasHit && colliders.Any(collider => collider == hitInfo.collider);
+        //public bool GetHit(Collider collider) => hasHit && hitInfo.collider == collider;
+        //public bool GetHitAny(Collider[] colliders) => hasHit && colliders.Any(collider => collider == hitInfo.collider);
+        //public bool GetHitAny(List<Collider> colliders) => hasHit && colliders.Any(collider => collider == hitInfo.collider);
     }
 }

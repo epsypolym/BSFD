@@ -13,7 +13,6 @@ namespace BSFDTestbed
 
         //part(self) related variables
         public bool isFitted; // Self explanatory
-        public AudioSource soundSource; // Source of assembleSound and disassembleSound.
         public Collider partTrigger; // Trigger of part, used for collision test between attachmentTrigger.
 
         //part(thing you are attaching to) related variables
@@ -65,7 +64,7 @@ namespace BSFDTestbed
                 Interaction.GUIAssemble.Value = true;
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Attach();
+                    Attach(true);
                     Interaction.GUIAssemble.Value = false;
                 }
             }
@@ -73,19 +72,20 @@ namespace BSFDTestbed
 
         bool canAttach() { return transform.IsChildOf(Interaction.ItemPivot) && attachmentTrigger.transform.childCount == 0 && !isFitted; }                 
 
-        void Attach()
+        public void Attach(bool playAudio)
         {
             if (isFitted) return;
+
             transform.parent = attachmentPoint.transform;
             transform.localPosition = Vector3.zero;
             transform.localEulerAngles = Vector3.zero;
             StartCoroutine(FixParent(attachmentPoint.transform));
-            StartCoroutine(LateAttach());
+            StartCoroutine(LateAttach(playAudio));
             boltParent.SetActive(true);
             OnAttach?.Invoke();
         }
 
-        IEnumerator LateAttach()
+        IEnumerator LateAttach(bool playAudio)
         {
             while(!rb.isKinematic || rb.useGravity)
             {
@@ -93,7 +93,8 @@ namespace BSFDTestbed
                 rb.useGravity = false;
                 yield return new WaitForEndOfFrame();
             }
-            BSFDTestbed.assembleAudio.Play();
+
+            if(playAudio) BSFDTestbed.assembleAudio.Play();
             partTrigger.enabled = false;
             attachmentTrigger.enabled = false;
             gameObject.tag = "Untagged";
@@ -115,7 +116,7 @@ namespace BSFDTestbed
             StartCoroutine(LateDetach());
             boltParent.SetActive(false);
             OnDetach?.Invoke();
-            //TODO: ResetBoltStatus();
+            UntightenAllBolts();
         }
 
         IEnumerator LateDetach()
@@ -132,7 +133,7 @@ namespace BSFDTestbed
 
         void UntightenAllBolts()
         {
-            //TODO: untightening event 
+            foreach (var b in bolts) b.SetBoltStep(0);
         }
     }
 }

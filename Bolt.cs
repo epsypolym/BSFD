@@ -1,5 +1,4 @@
-﻿using MSCLoader;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 namespace BSFDTestbed
@@ -36,6 +35,25 @@ namespace BSFDTestbed
             }
         }
 
+        public void SetBoltStep(int newBoltStep)
+        {
+            if(newBoltStep < 0 || newBoltStep > maxBoltSteps)
+            {
+                MSCLoader.ModConsole.Print("BSFD: Tried set BoltStep to "+newBoltStep+". BoltStep should be in range 0 - "+maxBoltSteps + ".");
+                return;
+            }
+
+            int steps = 0;
+            bool down = newBoltStep < currentBoltStep;
+            steps = Mathf.Abs(currentBoltStep - newBoltStep);
+
+            if (steps == 0) return; // we are already in target step -> quit.
+
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, down ? -45 * steps : 45 * steps));
+            transform.localPosition += new Vector3(0, down ? boltMoveAmount * steps : -boltMoveAmount * steps, 0);
+            currentBoltStep = newBoltStep;
+        }
+
         // Update is called from Interaction.cs
         public void UpdateBolt()
         {
@@ -69,7 +87,7 @@ namespace BSFDTestbed
             if (renderer && activeMaterial && defaultMaterial)
                 renderer.material = active ? activeMaterial : defaultMaterial;
             else
-                ModConsole.Print("Error when setting bolt material!");
+                MSCLoader.ModConsole.Print("BSFD: Error when setting bolt material!");
         }
 
         IEnumerator Delay(float time)

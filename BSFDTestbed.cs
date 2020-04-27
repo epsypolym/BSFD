@@ -52,7 +52,7 @@ namespace BSFDTestbed
             Material boltActiveMaterial = new Material(Shader.Find("GUI/Text Shader"));
             boltActiveMaterial.color = new Color(0, 1, 0);
 
-            if (boltActiveMaterial) Bolt.activeMaterial = boltActiveMaterial; else ModConsole.Print("No active bolt material found!");
+            if (boltActiveMaterial) Bolt.activeMaterial = boltActiveMaterial; else ModConsole.Print("BSFD: No active bolt material found!");
 
             //paarts.GetComponentInChildren<Part>().gameObject.AddComponent<OnAttachTestMono>();
         }
@@ -78,5 +78,6 @@ namespace BSFDTestbed
         {
             // Update is called once per frame
         }
+
     }
 }

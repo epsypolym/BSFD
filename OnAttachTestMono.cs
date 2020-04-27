@@ -4,12 +4,24 @@ namespace BSFDTestbed
 {
     public class OnAttachTestMono : MonoBehaviour
     {
-
+        Part part;
         // Use this for initialization
         void Start()
         {
-            GetComponent<Part>().OnAttach += BruhMoment;
-            GetComponent<Part>().OnDetach += SyshSituation;
+            part = GetComponent<Part>();
+            if (part)
+            {
+                part.OnAttach += BruhMoment;
+                part.OnDetach += SyshSituation;
+            }
+        }
+
+        void Update()
+        {
+            if (Input.GetKey(KeyCode.Keypad5) && part)
+            {
+                foreach (var b in part.bolts) b.SetBoltStep(Random.Range(0, b.maxBoltSteps));
+            }
         }
 
         void BruhMoment()
@@ -21,6 +33,5 @@ namespace BSFDTestbed
         {
             MSCLoader.ModConsole.Print("SYSH");
         }
-
     }
 }
