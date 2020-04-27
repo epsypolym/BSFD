@@ -81,6 +81,7 @@ namespace BSFDTestbed
             transform.localEulerAngles = Vector3.zero;
             StartCoroutine(FixParent(attachmentPoint.transform));
             StartCoroutine(LateAttach(playAudio));
+            rb.detectCollisions = false;
             boltParent.SetActive(true);
             OnAttach?.Invoke();
         }
@@ -91,6 +92,7 @@ namespace BSFDTestbed
             {
                 rb.isKinematic = true;
                 rb.useGravity = false;
+                rb.detectCollisions = false;
                 yield return new WaitForEndOfFrame();
             }
 
@@ -110,6 +112,7 @@ namespace BSFDTestbed
             transform.parent = null;
             rb.isKinematic = false;
             rb.useGravity = true;
+            rb.detectCollisions = true;
             attachmentTrigger.enabled = true;
             isFitted = false;
             StartCoroutine(FixParent(null));
@@ -125,6 +128,7 @@ namespace BSFDTestbed
             {
                 rb.isKinematic = false;
                 rb.useGravity = true;
+                rb.detectCollisions = true;
                 yield return new WaitForEndOfFrame();
             }
             attachmentTrigger.enabled = true;
