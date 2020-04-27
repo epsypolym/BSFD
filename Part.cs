@@ -1,8 +1,5 @@
-﻿using MSCLoader;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
-using HutongGames.PlayMaker.Actions;
-using HutongGames.PlayMaker;
 
 namespace BSFDTestbed
 {
@@ -23,8 +20,11 @@ namespace BSFDTestbed
         public GameObject attachmentPoint; // GameObject, parent of Part upon attachment.
         public Collider attachmentTrigger; // Collider, Trigger, used for collision test between partTrigger.
 
+        //events
         public delegate void AttachDelegate();
         public event AttachDelegate OnAttach;
+        public delegate void DetachDelegate();
+        public event DetachDelegate OnDetach;
 
         Rigidbody rb;
 
@@ -45,9 +45,7 @@ namespace BSFDTestbed
                 yield return new WaitForSeconds(3f);
             }
         }
-
-        
-
+   
         IEnumerator FixParent(Transform parent)
         {
             yield return new WaitForEndOfFrame();
@@ -62,7 +60,7 @@ namespace BSFDTestbed
 
         void OnTriggerStay(Collider other)
         {
-            if (!isFitted && other == attachmentTrigger && gameObject.transform.IsChildOf(Interaction.ItemPivot))
+            if (other == attachmentTrigger && canAttach())
             {
                 Interaction.GUIAssemble.Value = true;
                 if (Input.GetMouseButtonDown(0))
@@ -72,6 +70,8 @@ namespace BSFDTestbed
                 }
             }
         }
+
+        bool canAttach() { return transform.IsChildOf(Interaction.ItemPivot) && attachmentTrigger.transform.childCount == 0 && !isFitted; }                 
 
         void Attach()
         {
@@ -106,13 +106,15 @@ namespace BSFDTestbed
 
             BSFDTestbed.disassembleAudio.Play();
             gameObject.tag = "PART";
-            transform.parent = transform.root;
+            transform.parent = null;
             rb.isKinematic = false;
             rb.useGravity = true;
             attachmentTrigger.enabled = true;
             isFitted = false;
+            StartCoroutine(FixParent(null));
             StartCoroutine(LateDetach());
             boltParent.SetActive(false);
+            OnDetach?.Invoke();
             //TODO: ResetBoltStatus();
         }
 
@@ -131,7 +133,6 @@ namespace BSFDTestbed
         void UntightenAllBolts()
         {
             //TODO: untightening event 
-
         }
     }
 }

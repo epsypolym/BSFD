@@ -1,6 +1,4 @@
-﻿using MSCLoader;
-using System.IO.Pipes;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace BSFDTestbed
 {
@@ -10,18 +8,18 @@ namespace BSFDTestbed
         // Use this for initialization
         void Start()
         {
-            gameObject.GetComponent<Part>().OnAttach += BruhMoment;
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
+            GetComponent<Part>().OnAttach += BruhMoment;
+            GetComponent<Part>().OnDetach += SyshSituation;
         }
 
         void BruhMoment()
         {
-            Destroy(gameObject); //IT JUST WORKS
+            MSCLoader.ModConsole.Print("BRUH");
+        }
+
+        void SyshSituation()
+        {
+            MSCLoader.ModConsole.Print("SYSH");
         }
 
     }

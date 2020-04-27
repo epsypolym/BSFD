@@ -1,5 +1,4 @@
-﻿using HutongGames.PlayMaker;
-using MSCLoader;
+﻿using MSCLoader;
 using UnityEngine;
 using System.Collections;
 
@@ -7,7 +6,6 @@ namespace BSFDTestbed
 {
     public class Bolt : MonoBehaviour
     {
-        public float insAmount;
         public int currentBoltStep;
         public int maxBoltSteps = 8;
         public float boltSize;

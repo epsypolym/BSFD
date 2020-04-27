@@ -1,7 +1,6 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
 using UnityEngine;
-using System.Linq;
 
 namespace BSFDTestbed
 {
@@ -22,6 +21,7 @@ namespace BSFDTestbed
 
         public static AudioSource assembleAudio;
         public static AudioSource disassembleAudio;
+
         public override void OnNewGame()
         {
             // Called once, when starting a New Game, you can reset your saves here
@@ -53,6 +53,8 @@ namespace BSFDTestbed
             boltActiveMaterial.color = new Color(0, 1, 0);
 
             if (boltActiveMaterial) Bolt.activeMaterial = boltActiveMaterial; else ModConsole.Print("No active bolt material found!");
+
+            //paarts.GetComponentInChildren<Part>().gameObject.AddComponent<OnAttachTestMono>();
         }
 
         public override void ModSettings()
