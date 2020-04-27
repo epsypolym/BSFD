@@ -23,6 +23,9 @@ namespace BSFDTestbed
         public GameObject attachmentPoint; // GameObject, parent of Part upon attachment.
         public Collider attachmentTrigger; // Collider, Trigger, used for collision test between partTrigger.
 
+        public delegate void AttachDelegate();
+        public event AttachDelegate OnAttach;
+
         Rigidbody rb;
 
         // Use this for initialization
@@ -42,6 +45,8 @@ namespace BSFDTestbed
                 yield return new WaitForSeconds(3f);
             }
         }
+
+        
 
         IEnumerator FixParent(Transform parent)
         {
@@ -77,6 +82,7 @@ namespace BSFDTestbed
             StartCoroutine(FixParent(attachmentPoint.transform));
             StartCoroutine(LateAttach());
             boltParent.SetActive(true);
+            OnAttach?.Invoke();
         }
 
         IEnumerator LateAttach()
