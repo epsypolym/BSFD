@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections;
 using HutongGames.PlayMaker.Actions;
 using HutongGames.PlayMaker;
-using System.Net.Mail;
 
 namespace BSFDTestbed
 {
@@ -25,15 +24,12 @@ namespace BSFDTestbed
         public Collider attachmentTrigger; // Collider, Trigger, used for collision test between partTrigger.
 
         Rigidbody rb;
-        Transform ItemPivot;
 
         // Use this for initialization
         void Start()
         {
             rb = gameObject.GetComponent<Rigidbody>();
             StartCoroutine(UpdatePartTightness());
-            ItemPivot = Interaction.ItemPivot;
-            
         }
 
         IEnumerator UpdatePartTightness()
@@ -61,7 +57,7 @@ namespace BSFDTestbed
 
         void OnTriggerStay(Collider other)
         {
-            if (!isFitted && other == attachmentTrigger && gameObject.transform.IsChildOf(ItemPivot))
+            if (!isFitted && other == attachmentTrigger && gameObject.transform.IsChildOf(Interaction.ItemPivot))
             {
                 Interaction.GUIAssemble.Value = true;
                 if (Input.GetMouseButtonDown(0))

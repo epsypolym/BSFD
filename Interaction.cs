@@ -1,9 +1,9 @@
 ﻿using MSCLoader;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using HutongGames.PlayMaker;
-using System.Net.NetworkInformation;
 
 namespace BSFDTestbed
 {
@@ -11,6 +11,7 @@ namespace BSFDTestbed
     {
         public RaycastHit hitInfo;
         private Part raycastedPart;
+        bool isGuiActive = false;
 
         public bool hasHit = false;
         public float rayDistance = 1.35f;
@@ -51,11 +52,29 @@ namespace BSFDTestbed
                 raycastedPart = hit.collider.GetComponent<Part>();
                 if(raycastedPart)
                 {
+                    // Part can be detached.
                     if(raycastedPart.isFitted && raycastedPart.tightness == 0)
                     {
+                        // Show GUI
                         GUIDisassemble.Value = true;
-                        if (Input.GetMouseButtonDown(1)) raycastedPart.Detach();
+                        isGuiActive = true;
+
+                        // Detach Part by Input
+                        if (Input.GetMouseButtonDown(1))
+                        {
+                            raycastedPart.Detach();
+                            GUIDisassemble.Value = false;
+                        }
                     }
+                } 
+            }
+            else
+            {
+                // Disable GUI, if we activated it.
+                if (isGuiActive)
+                {
+                    GUIDisassemble.Value = false;
+                    isGuiActive = false;
                 }
             }
 
@@ -90,6 +109,7 @@ namespace BSFDTestbed
 
         void Update()
         {
+            // Update Active Bolt
             if (activeBolt) activeBolt.UpdateBolt();
         }
 
