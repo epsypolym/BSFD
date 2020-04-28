@@ -28,7 +28,7 @@ namespace BSFDTestbed
             if( (down && currentBoltStep > 0) || (!down && currentBoltStep < maxBoltSteps))
             {
                 StartCoroutine(Delay(delayTime));
-                Interaction.audioBoltScrew.Play();
+                BSFDinteraction.audioBoltScrew.Play();
                 currentBoltStep += down ? -1 : 1;
                 transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, down ? -45 : 45));
                 transform.localPosition += new Vector3(0, down ? boltMoveAmount : -boltMoveAmount, 0);
@@ -57,7 +57,7 @@ namespace BSFDTestbed
         // Update is called from Interaction.cs
         public void UpdateBolt()
         {
-            if (boltSize == BSFDTestbed.gameToolID.Value)
+            if (boltSize == BSFDinteraction.gameToolID.Value)
             {
                 // Set active material
                 if (renderer.material != activeMaterial) SetActiveMaterial(true);
@@ -65,7 +65,7 @@ namespace BSFDTestbed
                 if (Input.GetAxis("Mouse ScrollWheel") != 0 && !isDelay)
                 {
                     // Rachet Logic
-                    if (Interaction.ratchetFsm.Active) BoltTightenEvent(!Interaction.ratchetSwitch.Value, 0.1f);
+                    if (BSFDinteraction.ratchetFsm.Active) BoltTightenEvent(!BSFDinteraction.ratchetSwitch.Value, 0.1f);
 
                     // Spanner Logic                      
                     else BoltTightenEvent(Input.GetAxis("Mouse ScrollWheel") > 0 ? false : true, 0.28f);

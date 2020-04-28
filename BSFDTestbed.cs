@@ -15,12 +15,7 @@ namespace BSFDTestbed
         // This will create subfolder in Assets folder for your mod.
         public override bool UseAssetsFolder => true;
         public GameObject PLAYER;
-        public static Interaction boltInteraction;
-        public static bool GUIuse;
-        public static FsmFloat gameToolID;
-
-        public static AudioSource assembleAudio;
-        public static AudioSource disassembleAudio;
+        public static BSFDinteraction boltInteraction;
 
         public override void OnNewGame()
         {
@@ -30,13 +25,7 @@ namespace BSFDTestbed
         public override void OnLoad()
         {
             PLAYER = GameObject.Find("PLAYER");
-            boltInteraction = PLAYER.AddComponent<Interaction>();
-            GUIuse = PlayMakerGlobals.Instance.Variables.GetFsmBool("GUIuse").Value;
-            gameToolID = PlayMakerGlobals.Instance.Variables.GetFsmFloat("ToolWrenchSize");
-
-            assembleAudio = GameObject.Find("MasterAudio/CarBuilding/assemble").GetComponent<AudioSource>();
-            disassembleAudio = GameObject.Find("MasterAudio/CarBuilding/disassemble").GetComponent<AudioSource>();
-
+            boltInteraction = PLAYER.AddComponent<BSFDinteraction>();
             AssetBundle ab = LoadAssets.LoadBundle(this, "bsfd.unity3d");
             GameObject boltboxtest = ab.LoadAsset("boltbox.prefab") as GameObject;
             GameObject parts = ab.LoadAsset("PARTS.prefab") as GameObject;
@@ -49,12 +38,6 @@ namespace BSFDTestbed
 
             ab.Unload(false);
 
-            Material boltActiveMaterial = new Material(Shader.Find("GUI/Text Shader"));
-            boltActiveMaterial.color = new Color(0, 1, 0);
-
-            if (boltActiveMaterial) Bolt.activeMaterial = boltActiveMaterial; else ModConsole.Print("BSFD: No active bolt material found!");
-
-            //paarts.GetComponentInChildren<Part>().gameObject.AddComponent<OnAttachTestMono>();
         }
 
         public override void ModSettings()

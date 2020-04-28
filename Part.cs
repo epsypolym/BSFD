@@ -13,6 +13,7 @@ namespace BSFDTestbed
 
         //part(self) related variables
         public bool isFitted; // Self explanatory
+        public bool disableColliders = false;
         public Collider partTrigger; // Trigger of part, used for collision test between attachmentTrigger.
 
         //part(thing you are attaching to) related variables
@@ -61,16 +62,16 @@ namespace BSFDTestbed
         {
             if (other == attachmentTrigger && canAttach())
             {
-                Interaction.GUIAssemble.Value = true;
+                BSFDinteraction.GUIAssemble.Value = true;
                 if (Input.GetMouseButtonDown(0))
                 {
                     Attach(true);
-                    Interaction.GUIAssemble.Value = false;
+                    BSFDinteraction.GUIAssemble.Value = false;
                 }
             }
         }
 
-        bool canAttach() { return transform.IsChildOf(Interaction.ItemPivot) && attachmentTrigger.transform.childCount == 0 && !isFitted; }                 
+        bool canAttach() { return transform.IsChildOf(BSFDinteraction.ItemPivot) && attachmentTrigger.transform.childCount == 0 && !isFitted; }                 
 
         public void Attach(bool playAudio)
         {
@@ -81,7 +82,6 @@ namespace BSFDTestbed
             transform.localEulerAngles = Vector3.zero;
             StartCoroutine(FixParent(attachmentPoint.transform));
             StartCoroutine(LateAttach(playAudio));
-            rb.detectCollisions = false;
             boltParent.SetActive(true);
             OnAttach?.Invoke();
         }
@@ -92,11 +92,11 @@ namespace BSFDTestbed
             {
                 rb.isKinematic = true;
                 rb.useGravity = false;
-                rb.detectCollisions = false;
+                if (disableColliders) { rb.detectCollisions = false; }
                 yield return new WaitForEndOfFrame();
             }
 
-            if(playAudio) BSFDTestbed.assembleAudio.Play();
+            if(playAudio) BSFDinteraction.assembleAudio.Play();
             partTrigger.enabled = false;
             attachmentTrigger.enabled = false;
             gameObject.tag = "Untagged";
@@ -107,7 +107,7 @@ namespace BSFDTestbed
         {
             if (!isFitted) return;
 
-            BSFDTestbed.disassembleAudio.Play();
+            BSFDinteraction.disassembleAudio.Play();
             gameObject.tag = "PART";
             transform.parent = null;
             rb.isKinematic = false;
@@ -116,6 +116,7 @@ namespace BSFDTestbed
             attachmentTrigger.enabled = true;
             isFitted = false;
             StartCoroutine(FixParent(null));
+            if (disableColliders) { rb.detectCollisions = true; }
             StartCoroutine(LateDetach());
             boltParent.SetActive(false);
             OnDetach?.Invoke();
@@ -128,7 +129,7 @@ namespace BSFDTestbed
             {
                 rb.isKinematic = false;
                 rb.useGravity = true;
-                rb.detectCollisions = true;
+                if (disableColliders) { rb.detectCollisions = true; }
                 yield return new WaitForEndOfFrame();
             }
             attachmentTrigger.enabled = true;
