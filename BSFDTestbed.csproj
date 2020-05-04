@@ -57,7 +57,7 @@
     <Compile Include="Bolt.cs" />
     <Compile Include="BSFDTestbed.cs" />
     <Compile Include="BSFDinteraction.cs" />
-    <Compile Include="OnAttachTestMono.cs" />
+    <Compile Include="OnAttachExampleMono.cs" />
     <Compile Include="Part.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

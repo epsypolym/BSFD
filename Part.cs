@@ -92,6 +92,7 @@ namespace BSFDTestbed
             {
                 rb.isKinematic = true;
                 rb.useGravity = false;
+                
                 if (disableColliders) { rb.detectCollisions = false; }
                 yield return new WaitForEndOfFrame();
             }
