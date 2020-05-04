@@ -1,6 +1,3 @@
-Greetings, BSFD beta tester individualist.
-This is the testing version of the Bolting System For Dummies(tm).
-Your general task is to test BSFD in real modding conditions, for the sake of finding and or issues we may have overlooked.
 
 Instructions
 
