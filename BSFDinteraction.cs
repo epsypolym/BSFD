@@ -23,8 +23,6 @@ namespace BSFDTestbed
         public static FsmBool GUIDisassemble;
         public static FsmBool GUIuse;
         public static FsmFloat gameToolID;
-        public static AudioSource assembleAudio;
-        public static AudioSource disassembleAudio;
         public static Transform ItemPivot;
 
         private Bolt activeBolt;
@@ -44,8 +42,6 @@ namespace BSFDTestbed
             ItemPivot = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/ItemPivot").transform;
             GUIuse = PlayMakerGlobals.Instance.Variables.GetFsmBool("GUIuse").Value;
             gameToolID = PlayMakerGlobals.Instance.Variables.GetFsmFloat("ToolWrenchSize");
-            assembleAudio = GameObject.Find("MasterAudio/CarBuilding/assemble").GetComponent<AudioSource>();
-            disassembleAudio = GameObject.Find("MasterAudio/CarBuilding/disassemble").GetComponent<AudioSource>();
 
             Material boltActiveMaterial = new Material(Shader.Find("GUI/Text Shader"));
             boltActiveMaterial.color = new Color(0, 1, 0);
