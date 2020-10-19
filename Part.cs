@@ -24,8 +24,10 @@ namespace BSFDTestbed
         public Collider attachmentTrigger; // Collider, Trigger, used for collision test between partTrigger.
 
         //events
-        public event Action OnAttach;
-        public event Action OnDetach;
+        public delegate void AttachDelegate();
+        public event AttachDelegate OnAttach;
+        public delegate void DetachDelegate();
+        public event DetachDelegate OnDetach;
 
         Rigidbody rb;
         float mass;
