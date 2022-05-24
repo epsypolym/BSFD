@@ -29,6 +29,7 @@ namespace BSFDTestbed
             {
                 StartCoroutine(Delay(delayTime));
                 BSFDinteraction.audioBoltScrew.Play();
+                BSFDinteraction.audioBoltScrew.gameObject.transform.position = transform.position;
                 currentBoltStep += down ? -1 : 1;
                 transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, down ? -45 : 45));
                 transform.localPosition += new Vector3(0, down ? boltMoveAmount : -boltMoveAmount, 0);
